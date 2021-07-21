@@ -17,52 +17,54 @@
  * Define Global Variables
  * 
 */
-var sections = document.querySelectorAll('section');
-var navBuildList = document.createElement('ul');
-var navList = document.querySelector('ul');
-var selectedIndex = 0;
-var navArray = [];
-var highlightedNavItem;
-var scrollFlag = false; 
-var isScrolling;
+var sections = document.querySelectorAll('section');  //1D array to store the sections of the page
+var navBuildList = document.createElement('ul');  // ul Element variable used to build the nav bar
+var navList = document.querySelector('ul'); // ul element of the existing nav bar
+var selectedIndex = 0; //Index of the Selected nav item in the Array on objects
+var navArray = []; //Array of objects to hold the data of each nav item
+var highlightedNavItem; //Selected Nav item
+var scrollFlag = false; // Global flag for the active scrolling condition
+var isScrolling; // variable to store the event settimeout
 /**
  * End Global Variables
  * Start Helper Functions
  * 
  */
-function unSelectSelectedSection()
+function unSelectSelectedSection()  //Helper Function to unselect the selected section
 {
     var navItem;
     navItem = document.querySelector("#"+sections[selectedIndex].id);
     navItem.classList.remove("your-active-class");
 }
 
-function selectNewSection(id)
+function selectNewSection(index) //Helper Function to select the target section 
 {
     var navItem;
-    navItem = document.querySelector("#"+sections[id].id);
+    navItem = document.querySelector("#"+sections[index].id);
     navItem.classList.add("your-active-class");
 }
 
-function HideHeader()
+function HideHeader() //Helper function to hide the Nav bar header
 {
     var header = document.querySelector('.page__header');
     header.style.position = "absolute";
 }
-function ShowHeader()
+function ShowHeader() //Helper Function to show the Nav bar header
+
 {
     var header = document.querySelector('.page__header');
     header.style.position = "fixed";
 }
 
-function highlightNavItem(itemNum)
+function highlightNavItem(itemNum) //Helper Function to Highlight the selected nav item
 {    
     var item = document.getElementById(itemNum);
     highlightedNavItem.classList.remove("item-highlited");
     item.classList.add("item-highlited");
     highlightedNavItem = item;
 }
-function Scroll(navItem)
+
+function Scroll(navItem) //Helper Function to scroll the window to the given section coordinates
 {
     //Use ScrollTo event
     window.scrollTo({
@@ -77,7 +79,7 @@ function Scroll(navItem)
  * Begin Main Functions
  * 
 */
-function createNavItemsArrayOfObjects()
+function createNavItemsArrayOfObjects()  //Main function to create the Array of objects to help building the nav bar
 {
     var index = 0;
     sections.forEach((section) => {
@@ -92,11 +94,9 @@ function createNavItemsArrayOfObjects()
         listObject.index = index;
         navArray.push(listObject);
         index++;
-        //console.log("So "+section.attributes);
-            //console.log("lol");
     })
 }
-function buildNavBar()
+function buildNavBar() //Main function to build the nav bar using the nav bar array Of objects 
 {
     navArray.forEach((item) => {
         var navItem = document.createElement('li');
@@ -109,8 +109,7 @@ function buildNavBar()
     highlightedNavItem = navList.querySelector('li');
 }
 
-//
-function navClickEvent()
+function navClickEvent()  //main function to add the click event to the nav bar
 {
     
     navList.addEventListener('click',(event) =>{
@@ -121,11 +120,10 @@ function navClickEvent()
             //Window Scroll to the Section
             Scroll(navItem);
         }
-        //TODO Stlye Selected for the Nav Item    
     })
 }
 
-function windowScrollEvent()
+function windowScrollEvent() //main function to select the section upon manual scrolling 
 {
     document.addEventListener('scroll',() => {
         window.clearTimeout(isScrolling);
@@ -156,12 +154,6 @@ function windowScrollEvent()
 
     })
 }
-function navBarHideEvent()
-{
-    document.addEventListener('mouseup',()=>{
-        console.log("Hey");
-    })    
-}
 
 
 /**
@@ -173,7 +165,6 @@ function navBarHideEvent()
 //Main Program
 windowScrollEvent();
 navClickEvent();
-navBarHideEvent();
 createNavItemsArrayOfObjects();
 buildNavBar();
 

@@ -17,14 +17,16 @@
  * Define Global Variables
  * 
 */
-var sections = document.querySelectorAll('section');  //1D array to store the sections of the page
-var navBuildList = document.createElement('ul');  // ul Element variable used to build the nav bar
-var navList = document.querySelector('ul'); // ul element of the existing nav bar
-var selectedIndex = 0; //Index of the Selected nav item in the Array on objects
-var navArray = []; //Array of objects to hold the data of each nav item
-var highlightedNavItem; //Selected Nav item
-var scrollFlag = false; // Global flag for the active scrolling condition
-var isScrolling; // variable to store the event settimeout
+let sections = document.querySelectorAll('section');  //1D array to store the sections of the page
+let navBuildList = document.createElement('ul');  // ul Element variable used to build the nav bar
+const navList = document.querySelector('ul'); // ul element of the existing nav bar
+let selectedIndex = 0; //Index of the Selected nav item in the Array on objects
+let navArray = []; //Array of objects to hold the data of each nav item
+let highlightedNavItem; //highlighted Nav item
+let scrollFlag = false; // Global flag for the active scrolling condition
+let isScrolling; // variable to store the event settimeout
+let toSelect = 0; // index of the section to be selected
+
 /**
  * End Global Variables
  * Start Helper Functions
@@ -49,8 +51,8 @@ function HideHeader() //Helper function to hide the Nav bar header
     var header = document.querySelector('.page__header');
     header.style.position = "absolute";
 }
-function ShowHeader() //Helper Function to show the Nav bar header
 
+function ShowHeader() //Helper Function to show the Nav bar header
 {
     var header = document.querySelector('.page__header');
     header.style.position = "fixed";
@@ -64,14 +66,14 @@ function highlightNavItem(itemNum) //Helper Function to Highlight the selected n
     highlightedNavItem = item;
 }
 
+
 function Scroll(navItem) //Helper Function to scroll the window to the given section coordinates
 {
-    //Use ScrollTo event
-    window.scrollTo({
-        left: navItem.getBoundingClientRect().x + window.pageXOffset,
-        top: navItem.getBoundingClientRect().y + window.pageYOffset,
-        behavior: 'smooth'
-    })    
+    navItem.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "nearest"
+    });    
 }
 
 /**
@@ -134,23 +136,32 @@ function windowScrollEvent() //main function to select the section upon manual s
         }
         var index = 0;
         sections.forEach((section) => {
-            var sectionDimen = section.firstElementChild.firstElementChild.getBoundingClientRect();
-            //Check for the element to be within the viewport
-            if( sectionDimen.top >= 0 && sectionDimen.bottom <= (window.innerHeight || document.documentElement.clientHeight) )
+            var sectionDimen = section.firstElementChild.getBoundingClientRect();
+            console.log("Section "+index+" bottom:"+ sectionDimen.bottom);
+            console.log("Section "+index+" top:"+ sectionDimen.top);            
+            //Check for the section's container to be within the viewport
+            if(sectionDimen.top + 200  <= window.innerHeight  && sectionDimen.bottom >= 0)
             {
-                unSelectSelectedSection(selectedIndex);
-                selectNewSection(index);
-                selectedIndex = index;
-                highlightNavItem(index);
+                
+                toSelect = index;
             }
             index++;
         })
+        if(toSelect != selectedIndex)
+        {
+            unSelectSelectedSection(selectedIndex);
+            selectNewSection(toSelect);
+            highlightNavItem(toSelect);
+            selectedIndex = toSelect;
+        }
+
+        console.log("Window innerHeight: "+ window.innerHeight);
         isScrolling = setTimeout(()=>{
             console.log("Rest");
             scrollFlag = false;
             //Hide Header
             HideHeader();
-        },5000)
+        },3000)
 
     })
 }
